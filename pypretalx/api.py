@@ -44,23 +44,37 @@ class PyPretalx():
             raise PyPretalxUnexpectedResponse(r.text)
         self.token = j['token']
 
+    def _generic_get(self, event: str=None, endpoint: str=None, code: str=None, **params):
+        base_path = '/api/events/'
+        if event:
+            base_path = f'{base_path}{event}/'
+        if endpoint:
+            base_path = f'{base_path}{endpoint}/'
+        if code:
+            base_path = f'{base_path}{code}'
+        url = urljoin(self.root_url, base_path)
+        r = requests.get(url, params=params, headers=self.headers)
+        return r.json()
+
     def me(self):
         url = urljoin(self.root_url, '/api/me')
         r = requests.get(url, headers=self.headers)
         return r.json()
 
+    def events(self, event: str=None, **params):
+        return self._generic_get(event, **params)
+
+    def submissions(self, event: str, code: str=None, **params):
+        return self._generic_get(event, 'submissions', code, **params)
+
     def talks(self, event: str, code: str=None, **params):
-        if code:
-            url = urljoin(self.root_url, f'/api/events/{event}/talks/{code}')
-        else:
-            url = urljoin(self.root_url, f'/api/events/{event}/talks/')
-        r = requests.get(url, params=params, headers=self.headers)
-        return r.json()
+        return self._generic_get(event, 'talks', code, **params)
 
     def speakers(self, event: str, code: str=None, **params):
-        if code:
-            url = urljoin(self.root_url, f'/api/events/{event}/speakers/{code}')
-        else:
-            url = urljoin(self.root_url, f'/api/events/{event}/speakers/')
-        r = requests.get(url, params=params, headers=self.headers)
-        return r.json()
+        return self._generic_get(event, 'speakers', code, **params)
+
+    def reviews(self, event: str, code: str=None, **params):
+        return self._generic_get(event, 'reviews', code, **params)
+
+    def rooms(self, event: str, code: str=None, **params):
+        return self._generic_get(event, 'rooms', code, **params)
