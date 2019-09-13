@@ -1,6 +1,6 @@
 # pypretalx
 
-Query Pretalx via the API, it is for now read only.
+Query [Pretalx](https://pretalx.com/p/features) via the API, it is for now read only.
 
 # Documentation
 
